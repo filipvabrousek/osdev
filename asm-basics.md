@@ -1,5 +1,16 @@
 ## asm
 
+### bootloader
+
+```asm
+jmp $ ; infinite loop
+times 510-($-$$) db 0  ;510 times 0
+db 0x55, 0xaa ;510 zeroes needs to end with 55aa for the BIOS to find it in bootloader
+```
+
+
+### basics
+
 ```asm
 mov ah, 0x0e ; BIOS routine, switch to teletype mode
 mov al, 'A' ; move character we want to print into al
