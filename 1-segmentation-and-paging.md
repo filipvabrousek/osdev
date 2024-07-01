@@ -28,3 +28,5 @@ See this example:
 * we are using flat memory model not really a segmentation
 * setting up segments => mandatory
 * => we createGDT (Global Descriptor Table)
+
+https://superuser.com/questions/318804/understanding-flat-memory-model-and-segmented-memory-model
