@@ -5,7 +5,7 @@
 ```510-($-$$)```   
 - ```$``` is current adress, 
 - ```$$``` represents the start of the section (beginning of the program)
-- ```510-($-$$) db 0``` fill the rest of the boot sector up to byte 510 with zeroes using db 0
+- ```510-($-$$) db 0``` fill the rest of the boot sector up to byte 510 with zeroes using ```db 0```
 
 
 ```asm
