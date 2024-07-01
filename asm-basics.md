@@ -1,7 +1,7 @@
 ## asm
 
 ### bootloader
-``` times``` directive explained, ensures the total number of bytes up to this point is 510
+```times``` directive explained, ensures the total number of bytes up to this point is 510
 ```510-($-$$)```   
 - ```$``` is current adress, 
 - ```$$``` represents the start of the section (beginning of the program)
