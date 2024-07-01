@@ -8,10 +8,18 @@
 - ```510-($-$$) db 0``` fill the rest of the boot sector up to byte 510 with zeroes using ```db 0```
 
 
+boot.asm
 ```asm
 jmp $ ; infinite loop by jumping to current adress
 times 510-($-$$) db 0  ;510 times 0
 db 0x55, 0xaa ;510 zeroes needs to end with 55aa for the BIOS to find it in bootloader
+```
+
+
+```sh
+brew install nasm
+brew install qemu
+nasm -f bin boot.asm -o boot.bin && qemu-system-x86_64 boot.bin
 ```
 
 
