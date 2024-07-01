@@ -1,9 +1,14 @@
 ## asm
 
 ### bootloader
-
+``` times``` directive explained, ensures the total number of bytes up to this point is 510
+```510-($-$$)```   
+- ```$``` is current adress, 
+- ```$$``` represents the start of the section (beginning of the program)
+- ```510-($-$$)``` defines the number of bytes to fill up to 510 bytes
+- ```db 0``` - 510 zeros
 ```asm
-jmp $ ; infinite loop
+jmp $ ; infinite loop by jumping to current adress
 times 510-($-$$) db 0  ;510 times 0
 db 0x55, 0xaa ;510 zeroes needs to end with 55aa for the BIOS to find it in bootloader
 ```
