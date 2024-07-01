@@ -7,13 +7,44 @@
 - ```$$``` represents the start of the section (beginning of the program)
 - ```510-($-$$) db 0``` fill the rest of the boot sector up to byte 510 with zeroes using ```db 0```
 
-
 ### boot.asm
 ```asm
-jmp $ ; infinite loop by jumping to current adress
+jmp $ ;infinite loop by jumping to current adress
 times 510-($-$$) db 0  ;510 times 0
 db 0x55, 0xaa ;510 zeroes needs to end with 55aa for the BIOS to find it in bootloader
 ```
+
+## printing characters
+https://wiki.osdev.org/BIOS#:~:text=To%20an%20extent%2C%20the%20BIOS,INT%200x15%20%3D%20memory%20size%20functions
+
+```asm
+mov ah, 0x0e ;enable teletype mode
+mov al, 'E' ;move "E" to AL register, it is used to pass the character to be printed using the teletype output function
+int 0x10 ;call CPU interrupt 10h that prints the character using teletype function
+; eg 0x10 and AH = 0x13 prints string
+```
+
+
+
+## jumps
+* ```cmp``` = comparison
+* ```je label``` = jump to ```label``` register values are equal
+* if 3 == 3 it jumps to label which prints E
+```asm
+mov bx, 3
+cmp bx, 3
+je label
+jmp $
+
+label: 
+    mov ah, 0x0e
+    mov al, 'E'
+    int 0x10
+
+; boot.asm content goes here so we hang
+```
+
+
 
 
 ```sh
