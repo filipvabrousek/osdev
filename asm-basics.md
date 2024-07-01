@@ -8,7 +8,7 @@
 - ```510-($-$$) db 0``` fill the rest of the boot sector up to byte 510 with zeroes using ```db 0```
 
 
-boot.asm
+### boot.asm
 ```asm
 jmp $ ; infinite loop by jumping to current adress
 times 510-($-$$) db 0  ;510 times 0
