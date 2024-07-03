@@ -1,8 +1,20 @@
+
+
 typedef struct kernel
 {
     //char name [20];
     int age;
 };
+
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int size_t;
+
+#define VGA_ADDRESS 0xB8000
+#define VGA_WIDTH 80
+#define VGA_HEIGHT 25
+
+
 
 int count(int a, int b){
     return a * b;//'3' + 3 + 3;
@@ -78,7 +90,30 @@ void itoa(int num, char * str){
 
 }
 
+void clear_screen(uint8_t color){
+    // cast VGA text mode memory adress to pointer uint16_t
+    uint16_t *vga_buffer = (uint16_t *) VGA_ADDRESS;
+
+    // create blank character entry
+    // convert space character ' ' to uint16_t lower 8 bits character, upper 8 bits the color
+    // (uint16_t color << 8) shifts the color byte (argument of the function) left by 8 bits
+    // to set the color attribute for the blank space
+    uint16_t blank = (uint16_t) ' ' | ((uint16_t) color << 8);
+
+    for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++){
+        vga_buffer[i] = blank;
+    }
+
+
+}
+
 void main(){
+
+    
+
+    clear_screen(0x07);
+  
+
     char * v = (char*) 0xb8000;
   //  *v = 'a';
     *v = count(2, 3);  // 6  (2, 8) => @                     //'3' + 3 + 3;
@@ -86,6 +121,9 @@ void main(){
     char buffer[20];
     int result = count(2, 9);
     itoa(result, buffer);
+
+
+   
 
 /* v is the pointer to video memory at 0xb8000
  in x86 each character represented by 2 bytes
@@ -111,6 +149,27 @@ This leaves the odd addresses (v + 1, v + 3, v + 5, etc.) untouched, preserving 
         // setting attribute byte at odd adress to green color
         *(v + i * 2 + 1) = 0x0A; 
     }
+
+    *(v + 20) = 'p';
+    *(v + 21) = 'o';
+    *(v + 22) = 'o';
+
+
+
+
+    char letters[4] = "ato\0";
+    int start = 23;
+
+   /* for (int i = 0; i < letters[i] != '\0'; i++){
+         *((v + start) + i * 2) = letters[i];
+    }*/
+
+   for (int i = 0; i < 3; i++) {
+    *(v + start + i) = letters[i];
+}
+
+    // *(v + start + 1) = 'a'; + 0 wont work
+    //   *(v + start + 3) = 'a';
 
     // Light magenta = 0xD (works!) 0x0 black
     // No date in kernel mode
