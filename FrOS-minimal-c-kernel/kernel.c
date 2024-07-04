@@ -7,6 +7,9 @@ typedef struct kernel
     int age;
 };
 
+typedef unsigned int uint32_t;
+typedef char int8_t;
+
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int size_t;
@@ -19,7 +22,7 @@ typedef unsigned int size_t;
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
-
+#define NULL ((void *)0)
 
 
 int count(int a, int b){
@@ -73,6 +76,27 @@ char scancode_to_char[256] = {
     [0x1C] = '\n' // Enter
 };
 
+//char lettersa[3] = {'A', 'B', 'C'};
+//char* scancodes[3] = {"0x1E", "0x30", "0x2E"};
+/*
+int strcmp(const char *s1, const char *s2) {
+    while (*s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+    }
+    return *(unsigned char *)s1 - *(unsigned char *)s2;
+}
+
+int find_index_of_scancode(char* scancodes[], size_t length, const char* target) {
+    for (size_t i = 0; i < length; i++) {
+        if (scancodes[i] != NULL && strcmp(scancodes[i], target) == 0) {
+            return i;
+        }
+    }
+    return -1; // Return -1 if not found
+}
+*/
+
 static inline uint8_t inb(uint16_t port) {
     uint8_t result;
     __asm__ volatile ("inb %1, %0" : "=a"(result) : "Nd"(port));
@@ -82,6 +106,7 @@ static inline uint8_t inb(uint16_t port) {
 static inline void outb(uint16_t port, uint8_t data) {
     __asm__ volatile ("outb %0, %1" : : "a"(data), "Nd"(port));
 }
+
 
 void write_char_to_screen(char c, uint16_t pos, uint8_t color) {
     char *v = (char *)VGA_ADDRESS;
@@ -93,7 +118,10 @@ void waitForEnter() {
     uint8_t scancode;
     uint16_t pos = 30; // Position in video memory
     uint8_t color = 0x0F; // Default color (white on black)
-    
+   
+ char *v = (char *)VGA_ADDRESS;
+
+
 
      while (1) {
           while ((inb(KEYBOARD_STATUS_PORT) & 1) == 0);
@@ -104,13 +132,36 @@ void waitForEnter() {
             pos++;
         }
 
-           if (scancode == 0x1E) {  // 0x1C is the scan code for Enter
-            write_char_to_screen('A', pos, 0x4F); // Red '?'
-          // write_char_to_screen(scancode_to_char['0x1E'], pos, 0x4F);
-            pos++;
 
+
+           if (scancode == 0x1E) {  // 0x1C is the scan code for Enter
+           // write_char_to_screen('A', pos, 0x4F); // Red '?'
+          // write_char_to_screen(*(char*)scancode_to_char[0x1E], pos, 0x4F); writes S
+     //     process_key(scancode, &pos);
+      
+      //   char el = 'E';//scancode_to_char[0x1E];
+       // write_char_to_screen(el, pos, 0x4F);
+         //   pos++;
+/*
+if (scancode_to_char[0x1E] != NULL) {
+  *(v + pos * 2) = 'D'; 
+}*/
+
+
+         *(v + pos * 2) = 'A';  // scancode_to_char[0x1E]; //'D'; 
+        pos++;
             
         }
+
+         if (scancode == 0x30) { 
+            *(v + pos * 2) = 'B';  // scancode_to_char[0x1E]; //'D'; 
+            pos++;
+         }
+
+          if (scancode == 0x2E) { 
+            *(v + pos * 2) = 'C';  // scancode_to_char[0x1E]; //'D'; 
+            pos++;
+         }
 
        //   write_char_to_screen(scancode_to_char[scancode], pos, 0x4F); // Red '?'
         //    pos++;
@@ -161,7 +212,7 @@ void main(){
     char * v = (char*) 0xb8000;
   //  *v = 'a';
     *v = count(2, 3);  // 6  (2, 8) => @                     //'3' + 3 + 3;
-
+*v = scancode_to_char[0x1E];
     char buffer[20];
     int result = count(2, 9);
     itoa(result, buffer);
