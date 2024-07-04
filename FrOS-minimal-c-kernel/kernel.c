@@ -151,22 +151,25 @@ This leaves the odd addresses (v + 1, v + 3, v + 5, etc.) untouched, preserving 
     }
 
     *(v + 20) = 'p';
-    *(v + 21) = 'o';
-    *(v + 22) = 'o';
+    *(v + 21) = 'o'; // not displayed
+    *(v + 22) = 'm';
 
 
 
+// 18          pmABCDEFG18 (why is 18 at the end???)
+    char letters[7] = "ABCDEFG\0"; // crashes with 20
+    int start = 24; // not 23, we need to leave 1 bit for styles
+ 
 
-    char letters[4] = "ato\0";
-    int start = 23;
-
-   /* for (int i = 0; i < letters[i] != '\0'; i++){
+// *(v + start + 0) = letters[0];
+    for (int i = 0; i < letters[i] != '\0'; i++){
+ // i * 2 is important !!! we need to leave bit
          *((v + start) + i * 2) = letters[i];
-    }*/
+    }
 
-   for (int i = 0; i < 3; i++) {
+  /* for (int i = 0; i < 3; i++) {
     *(v + start + i) = letters[i];
-}
+}*/
 
     // *(v + start + 1) = 'a'; + 0 wont work
     //   *(v + start + 3) = 'a';
