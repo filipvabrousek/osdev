@@ -40,6 +40,37 @@ typedef unsigned int size_t;
 #define PAGE_TABLE_ENTRIES 1024
 #define PAGE_DIRECTORY_ENTRIES 1024
 
+// MALLOC
+#define MEMORY_POOL_SIZE 65536
+// Align to 8 bytes for simplicity
+#define ALIGN 8
+#define ALIGN_MASK (ALIGN - 1)
+
+typedef struct BlockHeader {
+    size_t size;
+    struct BlockHeader* next;
+    int free;
+} BlockHeader;
+
+static uint8_t memory_pool[MEMORY_POOL_SIZE];
+static BlockHeader* free_list = NULL;
+
+/*
+void initialize_memory_poolaaa() {
+    free_list = (BlockHeader*)memory_pool;
+    free_list->size = MEMORY_POOL_SIZE - sizeof(BlockHeader);
+    free_list->next = NULL;
+    free_list->free = 1;
+} SCREEN FLICKER WITH THIS*/
+
+/*void initialize_memory_poolaaa() {
+    free_list = (BlockHeader*)memory_pool;
+}also with this*/
+
+void initialize_memory_poolaaa() {
+   // free_list = (BlockHeader*)memory_pool;
+}
+
 typedef struct
 {
     uint32_t present : 1;
@@ -74,8 +105,13 @@ page_directory_entry_t page_directory[PAGE_DIRECTORY_ENTRIES] __attribute__((ali
 page_table_entry_t first_page_table[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
 
 
+
+
 void init_paging() { // now magically possible 
     // Clear the page directory
+    // Huge problems with that
+    // Try simple malloc() without paging (heap)
+    // Then try to add paging
 
 }
 
