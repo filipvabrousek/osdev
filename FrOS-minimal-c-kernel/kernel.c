@@ -24,7 +24,125 @@ typedef unsigned int size_t;
 #define KEYBOARD_STATUS_PORT 0x64
 #define NULL ((void *)0)
 
+// Disk write
+// Define base I/O ports for disk controller (assuming ATA)
+#define ATA_DATA_PORT       0x1F0
+#define ATA_SECTOR_COUNT    0x1F2
+#define ATA_LBA_LOW         0x1F3
+#define ATA_LBA_MID         0x1F4
+#define ATA_LBA_HIGH        0x1F5
+#define ATA_DEVICE_SELECT   0x1F6
+#define ATA_COMMAND         0x1F7
+#define ATA_STATUS          0x1F7
 
+
+// PAGING
+
+
+
+#define PAGE_SIZE 4096
+#define PAGE_TABLE_ENTRIES 1024
+#define PAGE_DIRECTORY_ENTRIES 1024
+
+typedef struct {
+    uint32_t present    : 1;
+    uint32_t rw         : 1;
+    uint32_t user       : 1;
+    uint32_t write_through : 1;
+    uint32_t cache_disabled : 1;
+    uint32_t accessed   : 1;
+    uint32_t reserved   : 1;
+    uint32_t page_size  : 1;
+    uint32_t ignored    : 1;
+    uint32_t available  : 3;
+    uint32_t frame      : 20;
+} page_table_entry_t;
+
+typedef struct {
+    uint32_t present    : 1;
+    uint32_t rw         : 1;
+    uint32_t user       : 1;
+    uint32_t write_through : 1;
+    uint32_t cache_disabled : 1;
+    uint32_t accessed   : 1;
+    uint32_t reserved   : 1;
+    uint32_t page_size  : 1;
+    uint32_t ignored    : 1;
+    uint32_t available  : 3;
+    uint32_t table_addr : 20;
+} page_directory_entry_t;
+
+page_directory_entry_t page_directory[PAGE_DIRECTORY_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
+page_table_entry_t first_page_table[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
+
+
+
+/*
+void init_paging() {
+    // Clear the page directory
+
+}
+*/
+
+/* adding method makes the screen glitch memory problem???
+void a(){
+
+}
+*/
+
+
+
+
+
+
+
+// Utility function: Delay to wait for disk operation to complete
+/*
+void delay() {
+    for (volatile int i = 0; i < 100000; ++i)
+        ;
+}
+
+// Function to write a byte to an I/O port
+static inline void outbDisk(uint16_t port, uint8_t value) {
+    __asm__ __volatile__ ("outb %0, %1" : : "a"(value), "Nd"(port));
+}
+
+// Function to read a byte from an I/O port
+static inline uint8_t inbDisk(uint16_t port) {
+    uint8_t ret;
+    __asm__ __volatile__ ("inb %1, %0" : "=a"(ret) : "Nd"(port));
+    return ret;
+}
+
+// Function to write a sector to disk
+void write_sector_to_disk(unsigned int sector_number, const char *data) {
+    // Select ATA device (assuming it's the master device)
+    outbDisk(ATA_DEVICE_SELECT, 0xE0 | ((sector_number >> 24) & 0x0F));
+
+    // Specify sector count
+    outbDisk(ATA_SECTOR_COUNT, 1);
+
+    // Specify LBA address
+    outbDisk(ATA_LBA_LOW, (unsigned char) sector_number);
+    outbDisk(ATA_LBA_MID, (unsigned char) (sector_number >> 8));
+    outbDisk(ATA_LBA_HIGH, (unsigned char) (sector_number >> 16));
+
+    // Send write command
+    outbDisk(ATA_COMMAND, 0x30); // WRITE SECTORS EXT command
+
+    // Wait for status to become ready
+    while (!(inbDisk(ATA_STATUS) & 0x80)) {
+        // Wait until the drive is ready
+    }
+
+    // Write data to data port (assuming 512 bytes per sector)
+    for (int i = 0; i < 512; ++i) {
+        outbDisk(ATA_DATA_PORT, data[i]);
+        delay();
+    }
+}
+*/
 int count(int a, int b){
     return a * b;//'3' + 3 + 3;
 
@@ -96,6 +214,11 @@ int find_index_of_scancode(char* scancodes[], size_t length, const char* target)
     return -1; // Return -1 if not found
 }
 */
+
+
+
+
+
 
 static inline uint8_t inb(uint16_t port) {
     uint8_t result;
@@ -208,6 +331,12 @@ void main(){
 
     clear_screen(0x07);
 
+
+ // Initialize paging
+   // init_paging();
+
+    // Print a message to the screen to indicate success
+   // print_string("Paging initialized.\n");
 
     char * v = (char*) 0xb8000;
   //  *v = 'a';
