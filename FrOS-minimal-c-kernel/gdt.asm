@@ -1,7 +1,7 @@
 ; switch from real mode to protected mode
 ; 32 bit operational mode so we can adress 32GBs of memory
 ; we can implement paging and multitasking
-; flat memory model no segmentaton
+; flat memory model no segmentation
 ; (also exists: 1) flat memory
 ; 2) segmentation,
 ; 3) paging models)

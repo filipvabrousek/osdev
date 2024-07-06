@@ -70,7 +70,7 @@ void initialize_memory_poolaaa() {
 void initialize_memory_poolaaa() {
    // free_list = (BlockHeader*)memory_pool;
 }
-
+/*
 typedef struct
 {
     uint32_t present : 1;
@@ -100,18 +100,64 @@ typedef struct
     uint32_t available : 3;
     uint32_t table_addr : 20;
 } page_directory_entry_t;
+*/
 
-page_directory_entry_t page_directory[PAGE_DIRECTORY_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
-page_table_entry_t first_page_table[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
+#define PAGE_DIR_ENTRIES 1024
+#define PAGE_TABLE_ENTRIES 1024
+#define PAGE_SIZE 4096
+#define KERNEL_BASE 0xC0000000
+
+uint32_t page_directory[PAGE_DIR_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
+uint32_t first_page_table[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
+
+
+//page_directory_entry_t page_directory[PAGE_DIRECTORY_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
+//page_table_entry_t first_page_table[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
 
 
 
 
-void init_paging() { // now magically possible 
+
+void init_pagingaaa() { 
+
+// problem!!!
+//  Write to the page in the higher half
+//first_page_table[0] = (0 * PAGE_SIZE) | 3;
+
+// also flickering
+  //  uint32_t *higher_half_page = (uint32_t *)KERNEL_BASE;
+  //  *higher_half_page = 0x12345678; // Example write operation
+
+
+
+
+
+
+
+
+
     // Clear the page directory
     // Huge problems with that
     // Try simple malloc() without paging (heap)
     // Then try to add paging
+
+// first_page_table[0] = (0 * PAGE_SIZE) | 3;
+
+     // Map the first 4 MB of physical memory to the higher half
+   /* for (uint32_t i = 0; i < PAGE_TABLE_ENTRIES; i++) {
+        first_page_table[i] = (i * PAGE_SIZE) | 3; // 0x3 means present and read/write
+    }*/
+
+    // Set the first page table in the page directory
+   /* page_directory[0] = (uint32_t)first_page_table | 3; // Map the first 4 MB of physical memory
+    page_directory[KERNEL_BASE >> 22] = (uint32_t)first_page_table | 3; // Map the first 4 MB to the higher half
+*/
+    // Set the remaining entries in the page directory to not present
+   /* for (uint32_t i = 1; i < PAGE_DIR_ENTRIES; i++) {
+        if (i != (KERNEL_BASE >> 22)) {
+            page_directory[i] = 0;
+        }
+    }*/
 
 }
 
@@ -223,6 +269,9 @@ void waitForEnter()
 //---------------------------------MAIN
 void main()
 {
+
+
+//init_paging();
 
     clear_screen(0x07);
 
