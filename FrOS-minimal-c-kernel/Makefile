@@ -12,6 +12,9 @@ kernel.bin: kernel_entry.o kernel.o
 kernel_entry.o: kernel_entry.asm
 	nasm $< -f elf -o $@
 
+paging.o: paging.asm
+	nasm $< -f elf -o $@
+
 kernel.o: kernel.c
 	x86_64-elf-gcc -m32 -ffreestanding -c $< -o $@
 

@@ -26,6 +26,7 @@ jmp $ ; Never executed
 %include "disk.asm"
 %include "gdt.asm"
 %include "switch-to-32bit.asm"
+%include "paging.asm"
 
 [bits 16] ; asm written in 16-bit mode
 load_kernel:
