@@ -16,7 +16,7 @@ KERNEL_OFFSET equ 0x1000
 ; stack is used for managing function calls and variables
 ; we need this to interface with C!
 mov [BOOT_DRIVE], dl 
-mov bp, 0x9000
+mov bp, 0x9000 ; 0x9FFF not working... with flickeirng increaisng stack space
 mov sp, bp
 
 call load_kernel ; read the kernel from disk

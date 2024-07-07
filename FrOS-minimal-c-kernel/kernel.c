@@ -338,7 +338,7 @@ int main(){
  */
 
 
- // int j = 0; 
+  int j = 0; 
  // FLICKERS 07/07/24 16:27:40, we likely cause stack overflow... When I comment out clear_screen it is okay
 // init_paging();
 
