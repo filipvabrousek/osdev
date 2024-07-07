@@ -3,7 +3,7 @@
 
 IMPORTANT:  
 You need to add code from kernel_paging.c to kernel.c  
-Edit **kernel.c** only!!!!  
+Edit **kernel.c** only
 Editi makefile won't work!
 
 ## Description
