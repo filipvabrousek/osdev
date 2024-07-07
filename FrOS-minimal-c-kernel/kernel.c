@@ -323,9 +323,23 @@ void waitForEnter()
 //---------------------------------MAIN
 void main()
 {
+  
+/*
+
+#define VGA_ADDRESS 0xB8000
 
 
-// int j = 0; FLICKERS 07/07/24 16:27:40
+int main(){
+    int j = 3; done not flicker
+     char *v = (char *)VGA_ADDRESS;
+     *v = 'H';
+
+}
+ */
+
+
+ // int j = 0; 
+ // FLICKERS 07/07/24 16:27:40, we likely cause stack overflow... When I comment out clear_screen it is okay
 // init_paging();
 
     clear_screen(0x07);
