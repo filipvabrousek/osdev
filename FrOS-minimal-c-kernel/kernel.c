@@ -338,7 +338,7 @@ int main(){
  */
 
 
-  int j = 0; 
+  //int j = 0; 
  // FLICKERS 07/07/24 16:27:40, we likely cause stack overflow... When I comment out clear_screen it is okay
 // init_paging();
 
@@ -361,11 +361,11 @@ int main(){
     /*
     If cell contains 18
     0xb8000 : Cell 0 (character) - '1'
-   0xb8001 : Cell 1 (attribute)
-   0xb8002 : Cell 2 (character) - '8'
-   0xb8003 : Cell 3 (attribute)
-   0xb8004 : Cell 4 (empty)
-   0xb8005 : Cell 5 (empty)
+    0xb8001 : Cell 1 (attribute)
+    0xb8002 : Cell 2 (character) - '8'
+    0xb8003 : Cell 3 (attribute)
+    0xb8004 : Cell 4 (empty)
+    0xb8005 : Cell 5 (empty)
 
    The loop effectively writes characters to every second byte (v, v + 2, v + 4, etc.) in video memory, which corresponds to the character cells.
    This leaves the odd addresses (v + 1, v + 3, v + 5, etc.) untouched, preserving them for attributes like color or other display properties.

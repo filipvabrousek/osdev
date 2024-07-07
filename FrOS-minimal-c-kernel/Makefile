@@ -15,6 +15,7 @@ kernel_entry.o: kernel_entry.asm
 paging.o: paging.asm
 	nasm $< -f elf -o $@
 
+# kernel_paging_only/kernel_paging.c
 kernel.o: kernel.c
 	x86_64-elf-gcc -m32 -ffreestanding -c $< -o $@
 
