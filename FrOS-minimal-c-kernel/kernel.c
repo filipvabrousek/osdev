@@ -107,6 +107,10 @@ typedef struct
 #define PAGE_SIZE 4096
 #define KERNEL_BASE 0xC0000000
 
+
+#define NUM_PAGES 1024
+#define PAGE_FRAME_SIZE 4096
+
 uint32_t page_directory[PAGE_DIR_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
 uint32_t first_page_table[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
 
@@ -115,10 +119,60 @@ uint32_t first_page_table[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE))
 //page_table_entry_t first_page_table[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
 
 
+// continue with paging array definition here
+// https://gayan1999malinda.medium.com/build-your-own-operating-system-7-9f3a9cc34605
+#define NUM_PAGES 1024
+
+typedef struct page
+{
+   unsigned int present    : 1;   // Page present in memory
+   unsigned int rw         : 1;   // Read-only if clear, readwrite if set
+   unsigned int user       : 1;   // Supervisor level only if clear
+   unsigned int accessed   : 1;   // Has the page been accessed since last refresh?
+   unsigned int dirty      : 1;   // Has the page been written to since last refresh?
+   unsigned int unused     : 7;   // Amalgamation of unused and reserved bits
+   unsigned int frame      : 20;  // Frame address (shifted right 12 bits)
+} page_t;
+
+typedef struct page_table
+{
+   page_t pages[1024] __attribute__((aligned(4096)));
+} page_table_t;
+
+unsigned int page_directory[NUM_PAGES] __attribute__((aligned(PAGE_FRAME_SIZE)));
+unsigned int page_table[NUM_PAGES] __attribute__((aligned(PAGE_FRAME_SIZE)));
+
+void init_pagingaaa() {  // not even called
+  //  int i; // okay
+ // int i = 0; FLICKERS
+
+
+ /* CRASHES
+ 
+ for (i = 0; i < NUM_PAGES; i++) {
+		page_directory[i] = 0x00000002;
+        //page_directory[i] = (unsigned int)directory;    
+     	}   */
 
 
 
-void init_pagingaaa() { 
+   /* int i;
+
+	// Create page directory, supervisor mode, read/write, not present : 0 1 0 = 2   
+	for (i = 0; i < NUM_PAGES; i++) {
+		page_directory[i] = 0x00000002;
+        //page_directory[i] = (unsigned int)directory;    
+     	}     
+
+	// Create page table, supervisor mode, read/write, present : 0 1 1 = 3   
+	// As the address is page aligned, it will always leave 12 bits zeroed.  
+	for (i = 0; i < NUM_PAGES; i++) { 
+	        page_table[i] = (i * 0x1000) | 3;
+	}	
+*/
+	// put page_table into page_directory supervisor level, read/write, present
+//	page_directory[0] = ((unsigned int)page_table) | 3;
+	 	
 
 // problem!!!
 //  Write to the page in the higher half
@@ -271,7 +325,8 @@ void main()
 {
 
 
-//init_paging();
+// int j = 0; FLICKERS 07/07/24 16:27:40
+// init_paging();
 
     clear_screen(0x07);
 
