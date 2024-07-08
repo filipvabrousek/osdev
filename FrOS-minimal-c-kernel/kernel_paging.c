@@ -142,6 +142,21 @@ typedef struct page_table
 unsigned int page_directory[NUM_PAGES] __attribute__((aligned(PAGE_FRAME_SIZE)));
 unsigned int page_table[NUM_PAGES] __attribute__((aligned(PAGE_FRAME_SIZE)));
 
+uint32_t read_cr0(void) {
+    uint32_t cr0;
+    asm volatile ("mov %%cr0, %0" : "=r"(cr0));
+    return cr0;
+}
+
+typedef int bool;
+#define true 1
+#define false 0
+
+bool is_paging_enabled(void) {
+    uint32_t cr0 = read_cr0();
+    return (cr0 & 0x80000000) != 0;
+}
+
 void init_pagingaaa() {  // not even called
     int i; // okay
  // int i = 0; FLICKERS
@@ -161,6 +176,7 @@ void init_pagingaaa() {  // not even called
 	}	
 
     page_directory[0] = ((unsigned int)page_table) | 3;
+
 
 
 
@@ -223,12 +239,115 @@ void init_pagingaaa() {  // not even called
 #define VGA_ADDRESS 0xB8000
 
 
+typedef struct {
+    uint32_t eax;
+    uint32_t ebx;
+    uint32_t ecx;
+    uint32_t edx;
+} cpuid_result_t;
+
+// Inline assembly to execute CPUID instruction with a given function id and sub-function id
+void cpuid(uint32_t function_id, uint32_t subfunction_id, cpuid_result_t *result) {
+    char *v = (char *)VGA_ADDRESS;
+
+  asm volatile(
+    "mov $3, %%eax" // $3 or different changes colours !!!
+    :
+    :
+    : "%eax"
+  );
+
+  uint32_t resulta;
+  asm volatile (
+    "mov %%eax, %0"
+    : "=r"(resulta)
+    : 
+    : "eax"
+  );
+
+
+  *(v+2) = resulta; // Chnage 2nd charctar to ASCII
+  *(v+3) = 0x0C; // Also change color to red
+  
+  /*
+  Code page 437 (CCSID 437) is the character set of the original IBM PC (personal computer).
+  [2] It is also known as CP437.
+  Position 3 of charset is heart symbol
+   */
+  // https://en.wikipedia.org/wiki/Code_page_437
+    asm volatile (
+        "cpuid"
+            : "=a" (result->eax),
+              "=b" (result->ebx), 
+              "=c" (result->ecx),
+              "=d" (result->edx)
+            : "a" (function_id), 
+              "c" (subfunction_id)
+    );
+}
+
+// Function to get the CPU vendor string
+void get_cpu_vendor(char *vendor) {
+    cpuid_result_t result;
+    cpuid(0, 0, &result);
+    ((uint32_t*)vendor)[0] = result.ebx;
+    ((uint32_t*)vendor)[1] = result.edx;
+    ((uint32_t*)vendor)[2] = result.ecx;
+    vendor[12] = '\0';
+}
+
+// Function to get the CPU brand string (requires multiple CPUID calls)
+void get_cpu_brand(char *brand) {
+    cpuid_result_t result;
+    cpuid(0x80000002, 0, &result);
+    *((cpuid_result_t *)brand) = result;
+    cpuid(0x80000003, 0, &result);
+    *((cpuid_result_t *)(brand + 16)) = result;
+    cpuid(0x80000004, 0, &result);
+    *((cpuid_result_t *)(brand + 32)) = result;
+    brand[48] = '\0';
+}
+
+
+void print(char * str){
+     char *v = (char *)VGA_ADDRESS;
+
+for (int i = 0; i < 1000; i++){ // Quick clear screen
+    *(v + 20 + i * 2) = ' ';
+   }
+
+   for (int i = 0; str[i] != '\0'; i++){
+    *(v + 20 + i * 2) = str[i];
+   }
+}
+
 int main(){
-     init_pagingaaa();
+    // http://wiki.osdev.org/Setting_Up_Paging
+     init_pagingaaa(); 
      
     int j = 3; //done not flicker
      char *v = (char *)VGA_ADDRESS;
-     *v = 'H';
+    
+    *v = 'P'; // Paging should be enabled
+
+// Prints no, but paging should be enabled anyways
+    uint32_t cr0; // Checks if the paging bit (bit 31 is set)
+    asm volatile ("mov %%cr0, %0" : "=r"(cr0));
+  
+  if ((cr0 & 0x80000000) != 0){ // Pagign is enabled
+    *v = 'Y';
+  } else {
+    *v = 'N';
+  }
+
+    char vendor[13];
+    char brand[49];
+
+    get_cpu_vendor(vendor);
+   // get_cpu_brand(brand);
+    
+   
+   print(vendor);
 
     
 
