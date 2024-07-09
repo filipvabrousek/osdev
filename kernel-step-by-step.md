@@ -138,8 +138,6 @@ void waitForEnter()
 ## Counting using itoa
 
 ```c
-
-
 int count(int a, int b) {
     return a * b; //'3' + 3 + 3;
     //  return '0' + a * b; for (2, 3) without itoa
