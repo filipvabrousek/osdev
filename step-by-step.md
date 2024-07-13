@@ -245,3 +245,9 @@ echo: os-image.bin
 clean:
 	$(RM) *.bin *.o *.dis
 ```
+
+
+### Compile
+```sh
+make run
+```
